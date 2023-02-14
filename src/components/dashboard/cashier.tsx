@@ -4,26 +4,27 @@ import { useReactToPrint } from 'react-to-print';
 import api, { API_URL } from 'src/api';
 import { toast } from 'react-hot-toast';
 import { useQuery } from 'react-query';
+import Image from 'next/image';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
 export function Cashier({ user, products }: { user: any; products: any[] }) {
-  const categories = ['Create Order', 'View Past Orders'];
+  const categories = ['Create Order', 'Past Orders'];
   return (
     <div className="mt-10">
       <h2 className="text-center text-black font-semibold text-[20px] my-3">
         Cashier - {user.name} ({String(user.department).toUpperCase()} DEPARTMENT)
       </h2>
       <Tab.Group>
-        <Tab.List className="flex space-x-1 w-full rounded-xl bg-blue-900/20 p-1 mt-8">
+        <Tab.List className="flex justify-between space-x-1 rounded-xl bg-blue-900/20 p-1 h-[40px] w-[450px] mx-auto mt-8">
           {categories.map((category) => (
             <Tab
               key={category}
               className={({ selected }) =>
                 classNames(
-                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                  'rounded-lg py-1 text-sm font-medium text-blue-700 w-full',
                   'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
                   selected ? 'bg-white shadow' : 'text-black hover:bg-white/[0.12] hover:text-white'
                 )
@@ -105,10 +106,10 @@ function CreateOrder({ user, products }: { user: any; products: any[] }) {
   return (
     <div>
       <form onSubmit={handleCreateOrder} className="my-4">
-        <h2 className="my-4 text-center text-black font-bold text-[30px]">Create Order</h2>
+        <h2 className="my-4 text-center text-black font-bold text-[20px]">Create Order</h2>
         <div className="flex flex-col gap-4 items-center my-5">
           <div>
-            <p className="text-center font-bold">Enter Amount Per Product</p>
+            <p className="text-center font-bold">Enter Number of Orders</p>
             <ul className="flex flex-col items-center justify-center mt-2 gap-3">
               {products.length > 0 &&
                 products.map((product) => (
@@ -162,7 +163,7 @@ export function ViewPastOrders({ user }: { user: any }) {
 
   return (
     <div>
-      <h2 className="my-4 text-center text-black font-bold text-[30px]">All Orders</h2>
+      {/* <h2 className="my-4 text-center text-black font-bold text-[30px]">All Orders</h2> */}
       {isLoading ? (
         <div className="text-center">Loading...</div>
       ) : (
@@ -203,26 +204,31 @@ function Order({
   return (
     <li className="flex flex-col gap-2 border border-black p-2">
       <div className="flex flex-col gap-2 p-2" ref={componentRef}>
-        <p>
-          <b>Order Id</b>: {order.id}
+        <p className="mx-auto">
+          <Image src="/ui-logo.png" width={100} height={100} alt="University of Ibadan" />
         </p>
-        <p>
-          <b>Cashier Name</b>: {order.name_of_cashier}
-        </p>
-        <p>
-          <b>Products Ordered</b>: {order.name_of_products_ordered}
-        </p>
-        <p>
-          <b>Quantity Ordered</b>: {order.amount_sold}
-        </p>
-        <p>
-          <b>Total Amount</b>: ₦{Number(order.total_price_of_products_sold).toLocaleString()}
-        </p>
-        <p>
-          <b>Time Ordered</b>: {new Date(order.created_at).toUTCString()}
-        </p>
+        <div className="mx-auto space-y-2">
+          <p>
+            <b>Order Id</b>: {order.id}
+          </p>
+          <p>
+            <b>Cashier Name</b>: {order.name_of_cashier}
+          </p>
+          <p>
+            <b>Products Ordered</b>: {order.name_of_products_ordered}
+          </p>
+          <p>
+            <b>Quantity Ordered</b>: {order.amount_sold}
+          </p>
+          <p>
+            <b>Total Amount</b>: ₦{Number(order.total_price_of_products_sold).toLocaleString()}
+          </p>
+          <p>
+            <b>Time Ordered</b>: {new Date(order.created_at).toUTCString()}
+          </p>
+        </div>
       </div>
-      <p className="flex gap-2 items-center">
+      <p className="flex gap-2 items-center mx-auto">
         <button
           onClick={() => handleDeleteOrder(order.id)}
           className="bg-[red] px-1 py-2 text-white"

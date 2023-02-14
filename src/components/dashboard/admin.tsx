@@ -10,20 +10,20 @@ function classNames(...classes: string[]) {
 }
 
 export function Admin({ user }: { user: any }) {
-  const categories = ['Create Product', 'Products', 'Past Orders'];
+  const categories = ['Create Product', 'Products', 'Past Orders', 'Cashiers'];
   return (
     <div className="">
       <h2 className="text-center text-black font-semibold text-[20px]">
         Admin - {user.name} ({String(user.department).toUpperCase()} DEPARTMENT)
       </h2>
       <Tab.Group>
-        <Tab.List className="flex space-x-1 w-full rounded-xl bg-blue-900/20 p-1 mt-8">
+        <Tab.List className="flex justify-between space-x-1 w-[450px] mx-auto rounded-xl bg-blue-900/20 p-1 h-[40px] mt-8">
           {categories.map((category) => (
             <Tab
               key={category}
               className={({ selected }) =>
                 classNames(
-                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
+                  'rounded-lg py-1 text-sm font-medium text-blue-700 w-full',
                   'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
                   selected ? 'bg-white shadow' : 'text-black hover:bg-white/[0.12] hover:text-white'
                 )
@@ -57,6 +57,14 @@ export function Admin({ user }: { user: any }) {
             )}
           >
             <ViewPastOrders user={user} />
+          </Tab.Panel>
+          <Tab.Panel
+            className={classNames(
+              'rounded-xl bg-white p-3',
+              'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
+            )}
+          >
+            <ViewCashiers user={user} />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
@@ -107,7 +115,7 @@ export function CreateProduct({ user }: { user: any }) {
   return (
     <div>
       <form onSubmit={handleCreateProduct} className="my-4">
-        <h2 className="my-4 text-center text-black font-bold text-[30px]">Create Product</h2>
+        <h2 className="my-4 text-center text-black font-bold text-[20px]">Create Product</h2>
         <div className="flex flex-col gap-4 items-center my-5">
           <input
             className="border border-[grey] px-2 py-2 w-[300px] placeholder-black"
@@ -173,7 +181,7 @@ export function ViewProducts({ user }: { user: any }) {
 
   return (
     <div>
-      <h2 className="my-4 text-center text-black font-bold text-[30px]">All Products</h2>
+      {/* <h2 className="my-4 text-center text-black font-bold text-[30px]">All Products</h2> */}
       {isLoading ? (
         <div className="text-center">Loading...</div>
       ) : (
@@ -201,6 +209,72 @@ export function ViewProducts({ user }: { user: any }) {
             </ul>
           )}
           {data?.length < 1 && <div className="text-center">No Products</div>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function ViewCashiers({ user }: { user: any }) {
+  const { isLoading, error, data, refetch } = useQuery(`cashiers-${user.departmnent}`, () =>
+    fetch(`${API_URL}/users/cashier/${user.department}`, { method: 'get' })
+      .then((res) => res.json())
+      .catch(() => null)
+  );
+
+  const handleUserDelete = async (id: string) => {
+    try {
+      const response = await fetch(`${API_URL}/users/${id}`, { method: 'delete' });
+      const data = await response.json();
+      if (data) {
+        refetch();
+        toast.success('Cashier deleted!');
+      }
+    } catch (error) {
+      toast.error('Failed to delete cashier');
+    }
+  };
+
+  return (
+    <div>
+      {/* <h2 className="my-4 text-center text-black font-bold text-[30px]">All Cashiers</h2> */}
+      {isLoading ? (
+        <div className="text-center">Loading...</div>
+      ) : (
+        <div>
+          <div>
+            {data?.length > 0 && (
+              <ul className="space-y-3">
+                {data?.map((user: any) => (
+                  <li key={user.id} className="border border-black flex flex-col gap-2 p-2">
+                    <p>
+                      <b>Cashier Name</b>: {user.name}
+                    </p>
+                    <p>
+                      <b>Email</b>: {user.email}
+                    </p>
+                    <p>
+                      <b>Department</b>: {user.department}
+                    </p>
+                    <p>
+                      <b>Number of Orders</b>: {user.products.length}
+                    </p>
+                    <p>
+                      <button
+                        className="bg-[red] text-white text-sm p-1"
+                        onClick={() => handleUserDelete(user.id)}
+                      >
+                        Delete
+                      </button>
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          {(!Array.isArray(data) || data.length < 1) && (
+            <div className="text-center">No Cashiers</div>
+          )}
         </div>
       )}
     </div>
