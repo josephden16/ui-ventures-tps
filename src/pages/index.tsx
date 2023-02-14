@@ -29,12 +29,12 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>UI Venture - TPS</title>
+        <title>UI Ventures - TPS</title>
         <meta name="description" content="UI Ventures - Transaction Processing System" />
       </Head>
       <main className="flex flex-col items-center jusitfy-center w-full h-screen pt-4 pb-10">
         <Image src="/ui-logo.png" width={100} height={100} alt="University of Ibadan" />
-        <h1 className="mb-[30px] text-[40px] text-black text-center">UI Venture - TPS</h1>
+        <h1 className="mb-[30px] text-[40px] text-black text-center">UI Ventures - TPS</h1>
         {loginView ? <Login viewSignup={viewSignup} /> : <SignUp viewLogin={viewLogin} />}
       </main>
     </>
